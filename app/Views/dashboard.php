@@ -11,6 +11,7 @@ $roleMap = [
     'pekurban' => 'Pekurban',
     'panitia' => 'Panitia',
     'warga' => 'Warga',
+    'admin' => 'Admin',  // Tambahan supaya peran admin muncul di tampilan peran
 ];
 
 $activeRoles = array_intersect_key($roleMap, array_flip(array_intersect(array_keys($roleMap), $roles)));
@@ -19,8 +20,8 @@ $peranDisplay = implode(', ', $activeRoles);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
@@ -71,7 +72,12 @@ $peranDisplay = implode(', ', $activeRoles);
       <a class="nav-link" href="#wargaFeature">Warga</a>
     <?php endif; ?>
 
-    <hr class="text-secondary">
+    <!-- Tambahan menu keuangan untuk admin dan panitia -->
+    <?php if (in_array('admin', $roles) || in_array('panitia', $roles)): ?>
+      <a class="nav-link" href="index.php?page=keuangan">Keuangan</a>
+    <?php endif; ?>
+
+    <hr class="text-secondary" />
     <a class="nav-link text-danger" href="index.php?page=logout">Logout</a>
   </nav>
 
@@ -101,12 +107,18 @@ $peranDisplay = implode(', ', $activeRoles);
   <?php if (in_array('panitia', $roles)): ?>
     <section id="panitiaFeature" class="mb-4">
       <p>Daftar pekurban yang Anda kelola:</p>
+      <a href="index.php?page=info-kurban">Lihat Info Qurban</a>
+    </section>
+    <section id="keuanganFeature" class="mb-4">
+      <p>Kelola data keuangan (pemasukan & pengeluaran) di sini.</p>
+      <a href="index.php?page=keuangan">Lihat Data Keuangan</a>
     </section>
   <?php endif; ?>
 
   <?php if (in_array('warga', $roles)): ?>
     <section id="wargaFeature" class="mb-4">
       <p>Daftar pekurban aktif di lingkungan Anda.</p>
+      <a href="index.php?page=pembagian_daging">Lihat Info Pembagian Daging</a>
     </section>
   <?php endif; ?>
 </div>
