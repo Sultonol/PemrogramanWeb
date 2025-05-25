@@ -4,18 +4,27 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Autoload class jika sudah pakai composer
-if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-    require_once __DIR__ . '/../vendor/autoload.php';
-}
+// if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+//     require_once __DIR__ . '/../vendor/autoload.php';
+// }
 
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
 require_once __DIR__ . '/../app/Controllers/KeuanganController.php';
 require_once __DIR__ . '/../app/Controllers/DistribusiDagingController.php';
 require_once __DIR__ . '/../app/Models/User.php';
 
-$page = $_GET['page'] ?? 'login';
+$page = $_GET['page'] ?? 'home';
 
 switch ($page) {
+    // ✅ Tambahkan halaman home sebelum login
+    case 'home':
+        if (isset($_SESSION['user'])) {
+            header('Location: index.php?page=dashboard');
+            exit;
+        }
+        require_once __DIR__ . '/../app/Views/home.php';
+        break;
+
     case 'login':
         $auth = new AuthController();
         if (isset($_SESSION['user'])) {
@@ -69,7 +78,6 @@ switch ($page) {
             header('Location: index.php?page=login');
             exit;
         }
-
         require_once __DIR__ . '/../app/Views/jatah-daging.php';
         break;
 
@@ -80,11 +88,8 @@ switch ($page) {
         }
 
         $controller = new DistribusiDagingController();
-
-        // Contoh: tanggal hari ini
         $tanggal = date('Y-m-d');
 
-        // Mengecek apakah data pembagian untuk tanggal ini sudah ada
         $refleksi = new ReflectionClass($controller);
         $property = $refleksi->getProperty('model');
         $property->setAccessible(true);
@@ -96,12 +101,8 @@ switch ($page) {
             $model->simpanPembagianDaging($tanggal);
         }
 
-        // Tampilkan halaman
         $controller->showPembagianDaging($tanggal);
         break;
-
-
-
 
     case 'keuangan':
         if (!isset($_SESSION['user'])) {
