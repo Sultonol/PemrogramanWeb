@@ -1,128 +1,125 @@
 <?php
 if (!isset($_SESSION['user'])) {
-    header('Location: index.php?page=login');
-    exit;
+  header('Location: index.php?page=login');
+  exit;
 }
 
-$roles = $_SESSION['user']['roles'];
-$nama = $_SESSION['user']['nama'];
+$user = $_SESSION['user'];
+$roles = $user['roles'] ?? [];
 
-$roleMap = [
-    'pekurban' => 'Pekurban',
-    'panitia' => 'Panitia',
-    'warga' => 'Warga',
-    'admin' => 'Admin',  // Tambahan supaya peran admin muncul di tampilan peran
-];
-
-$activeRoles = array_intersect_key($roleMap, array_flip(array_intersect(array_keys($roleMap), $roles)));
-$peranDisplay = implode(', ', $activeRoles);
+// Tentukan konten apa yang akan ditampilkan sesuai role utama user.
+// Misal prioritas: admin > panitia > pekurban > warga
+if (in_array('admin', $roles)) {
+  $pageRole = 'admin';
+} elseif (in_array('panitia', $roles)) {
+  $pageRole = 'panitia';
+} elseif (in_array('pekurban', $roles)) {
+  $pageRole = 'pekurban';
+} elseif (in_array('warga', $roles)) {
+  $pageRole = 'warga';
+} else {
+  $pageRole = 'home'; // default fallback
+}
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <title>Dashboard - <?= htmlspecialchars($pageRole) ?></title>
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
   <style>
     body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: row;
+      margin: 0;
+      font-family: Arial, sans-serif;
     }
+
     .sidebar {
-      width: 250px;
+      width: 200px;
       height: 100vh;
+      background-color: #f8f9fa;
+      border-right: 1px solid #ddd;
+      padding: 20px;
       position: fixed;
       top: 0;
       left: 0;
-      background-color: #343a40;
-      padding-top: 1rem;
+      overflow-y: auto;
     }
+
+    .sidebar h4 {
+      margin-bottom: 1rem;
+    }
+
     .sidebar .nav-link {
-      color: #adb5bd;
+      cursor: pointer;
+      color: #333;
+      display: block;
+      padding: 10px 15px;
+      border-radius: 5px;
+      margin-bottom: 5px;
+      text-decoration: none;
     }
-    .sidebar .nav-link.active,
+
     .sidebar .nav-link:hover {
-      color: #fff;
-      background-color: #495057;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
     }
+
     .content {
       margin-left: 250px;
-      padding: 2rem;
-      flex-grow: 1;
+      padding: 30px;
     }
   </style>
 </head>
-<body>
 
-<div class="sidebar d-flex flex-column">
-  <h4 class="text-white px-3">Dashboard</h4>
-  <nav class="nav flex-column px-3">
+<body>
+  <div class="sidebar">
+    <h4>Menu</h4>
     <?php if (in_array('admin', $roles)): ?>
-      <a class="nav-link" href="#adminPanel">Admin Panel</a>
-    <?php endif; ?>
-    <?php if (in_array('pekurban', $roles)): ?>
-      <a class="nav-link" href="#pekurbanFeature">Pekurban</a>
+      <a href="index.php?page=dashboard&role=admin" class="nav-link <?= $pageRole === 'admin' ? 'active' : '' ?>">Admin</a>
     <?php endif; ?>
     <?php if (in_array('panitia', $roles)): ?>
-      <a class="nav-link" href="#panitiaFeature">Panitia</a>
+      <a href="index.php?page=dashboard&role=panitia" class="nav-link <?= $pageRole === 'panitia' ? 'active' : '' ?>">Panitia</a>
+    <?php endif; ?>
+    <?php if (in_array('pekurban', $roles)): ?>
+      <a href="index.php?page=dashboard&role=pekurban" class="nav-link <?= $pageRole === 'pekurban' ? 'active' : '' ?>">Pekurban</a>
     <?php endif; ?>
     <?php if (in_array('warga', $roles)): ?>
-      <a class="nav-link" href="#wargaFeature">Warga</a>
+      <a href="index.php?page=dashboard&role=warga" class="nav-link <?= $pageRole === 'warga' ? 'active' : '' ?>">Warga</a>
     <?php endif; ?>
-
-    <!-- Tambahan menu keuangan untuk admin dan panitia -->
-    <?php if (in_array('admin', $roles) || in_array('panitia', $roles)): ?>
-      <a class="nav-link" href="index.php?page=keuangan">Keuangan</a>
-    <?php endif; ?>
-
-    <hr class="text-secondary" />
-    <a class="nav-link text-danger" href="index.php?page=logout">Logout</a>
-  </nav>
-
-  <div class="mt-auto px-3 pb-3 text-white">
-    Selamat datang,<br><strong><?= htmlspecialchars($nama) ?></strong>
+    <a href="index.php?page=logout" class="nav-link text-danger">Logout</a>
   </div>
-</div>
 
-<div class="content">
-  <h4>Selamat datang, <?= htmlspecialchars($nama) ?>.</h4>
-  <?php if (count($activeRoles) > 0): ?>
-    <p>Anda sebagai <?= $peranDisplay ?>.</p>
-  <?php endif; ?>
+  <div class="content">
+    <?php
+    // Jika ada role yang dipilih via query string (klik menu), pakai itu
+    if (isset($_GET['role']) && in_array($_GET['role'], ['admin', 'panitia', 'pekurban', 'warga'])) {
+      $pageRole = $_GET['role'];
+    }
 
-  <?php if (in_array('admin', $roles)): ?>
-    <section id="adminPanel" class="mb-4">
-      <p>Fitur khusus admin di sini.</p>
-    </section>
-  <?php endif; ?>
-
-  <?php if (in_array('pekurban', $roles)): ?>
-    <section id="pekurbanFeature" class="mb-4">
-      <p>Info tentang status qurban dan pembayaran.</p>
-    </section>
-  <?php endif; ?>
-
-  <?php if (in_array('panitia', $roles)): ?>
-    <section id="panitiaFeature" class="mb-4">
-      <p>Daftar pekurban yang Anda kelola:</p>
-      <a href="index.php?page=info-kurban">Lihat Info Qurban</a>
-    </section>
-    <section id="keuanganFeature" class="mb-4">
-      <p>Kelola data keuangan (pemasukan & pengeluaran) di sini.</p>
-      <a href="index.php?page=keuangan">Lihat Data Keuangan</a>
-    </section>
-  <?php endif; ?>
-
-  <?php if (in_array('warga', $roles)): ?>
-    <section id="wargaFeature" class="mb-4">
-      <p>Daftar pekurban aktif di lingkungan Anda.</p>
-      <a href="index.php?page=pembagian_daging">Lihat Info Pembagian Daging</a>
-    </section>
-  <?php endif; ?>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    // Tampilkan konten role sesuai
+    switch ($pageRole) {
+      case 'admin':
+        include __DIR__ . '/../Views/Component/admin.php';
+        break;
+      case 'panitia':
+        include __DIR__ . '/../Views/Component/panitia.php';
+        break;
+      case 'pekurban':
+        include __DIR__ . '/../Views/Component/pekurban.php';
+        break;
+      case 'warga':
+        include __DIR__ . '/../Views/Component/warga.php';
+        break;
+      default:
+        echo "<h4>Selamat Datang, " . htmlspecialchars($user['name']) . "</h4>";
+        echo "<p>Silakan pilih menu di sebelah kiri.</p>";
+        break;
+    }
+    ?>
+  </div>
 </body>
+
 </html>

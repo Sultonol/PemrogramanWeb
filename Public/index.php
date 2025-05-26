@@ -3,11 +3,6 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Autoload class jika sudah pakai composer
-// if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-//     require_once __DIR__ . '/../vendor/autoload.php';
-// }
-
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
 require_once __DIR__ . '/../app/Controllers/KeuanganController.php';
 require_once __DIR__ . '/../app/Controllers/DistribusiDagingController.php';
@@ -16,7 +11,6 @@ require_once __DIR__ . '/../app/Models/User.php';
 $page = $_GET['page'] ?? 'home';
 
 switch ($page) {
-    // ✅ Tambahkan halaman home sebelum login
     case 'home':
         if (isset($_SESSION['user'])) {
             header('Location: index.php?page=dashboard');
@@ -33,7 +27,7 @@ switch ($page) {
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $auth->login(); // Proses login
+            $auth->login();
         } else {
             require_once __DIR__ . '/../app/Views/Auth/login.php';
         }
@@ -45,23 +39,10 @@ switch ($page) {
         break;
 
     case 'dashboard':
-    case 'warga':
-    case 'panitia':
-    case 'pekurban':
         if (!isset($_SESSION['user'])) {
             header('Location: index.php?page=login');
             exit;
         }
-
-        $userModel = new User();
-        $user = $_SESSION['user'];
-        $roles = $user['roles'] ?? [];
-
-        $activePekurban = [];
-        if (!in_array('pekurban', $roles)) {
-            $activePekurban = $userModel->getAllActivePekurban();
-        }
-
         require_once __DIR__ . '/../app/Views/dashboard.php';
         break;
 
@@ -70,6 +51,10 @@ switch ($page) {
             header('Location: index.php?page=login');
             exit;
         }
+
+        $userModel = new User();
+        // $daftarPekurban = $userModel->getAllPekurban();
+
         require_once __DIR__ . '/../app/Views/info-kurban.php';
         break;
 
@@ -130,6 +115,37 @@ switch ($page) {
         $controller = new KeuanganController();
         $controller->store();
         break;
+
+    // case 'hewan_qurban_peserta':
+    //     if (!isset($_SESSION['user']) || !in_array('admin', $_SESSION['user']['roles'])) {
+    //         header('Location: index.php?page=login');
+    //         exit;
+    //     }
+    //     $hewan_id = $_GET['hewan_id'] ?? 0;
+    //     $controller = new HewanQurbanPesertaController();
+    //     $controller->index($hewan_id);
+    //     break;
+
+    // case 'hewan_qurban_peserta_tambah':
+    //     if (!isset($_SESSION['user']) || !in_array('admin', $_SESSION['user']['roles'])) {
+    //         header('Location: index.php?page=login');
+    //         exit;
+    //     }
+    //     $hewan_id = $_GET['hewan_id'] ?? 0;
+    //     $controller = new HewanQurbanPesertaController();
+    //     $controller->tambahPeserta($hewan_id);
+    //     break;
+
+    // case 'hewan_qurban_peserta_hapus':
+    //     if (!isset($_SESSION['user']) || !in_array('admin', $_SESSION['user']['roles'])) {
+    //         header('Location: index.php?page=login');
+    //         exit;
+    //     }
+    //     $id = $_GET['id'] ?? 0;
+    //     $hewan_id = $_GET['hewan_id'] ?? 0;
+    //     $controller = new HewanQurbanPesertaController();
+    //     $controller->hapusPeserta($id, $hewan_id);
+    //     break;
 
     default:
         echo "Halaman tidak ditemukan!";
