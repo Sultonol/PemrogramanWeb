@@ -3,10 +3,13 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// Memuat semua controller dan model yang dibutuhkan
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
 require_once __DIR__ . '/../app/Controllers/KeuanganController.php';
 require_once __DIR__ . '/../app/Controllers/DistribusiDagingController.php';
 require_once __DIR__ . '/../app/Models/User.php';
+require_once __DIR__ . '/../app/models/Kelola-user.php';
+require_once __DIR__ . '/../app/Database/Database.php';
 
 $page = $_GET['page'] ?? 'home';
 
@@ -53,8 +56,6 @@ switch ($page) {
         }
 
         $userModel = new User();
-        // $daftarPekurban = $userModel->getAllPekurban();
-
         require_once __DIR__ . '/../app/Views/info-kurban.php';
         break;
 
@@ -116,36 +117,16 @@ switch ($page) {
         $controller->store();
         break;
 
-    // case 'hewan_qurban_peserta':
-    //     if (!isset($_SESSION['user']) || !in_array('admin', $_SESSION['user']['roles'])) {
-    //         header('Location: index.php?page=login');
-    //         exit;
-    //     }
-    //     $hewan_id = $_GET['hewan_id'] ?? 0;
-    //     $controller = new HewanQurbanPesertaController();
-    //     $controller->index($hewan_id);
-    //     break;
+    case 'kelola-user':
+        if (!isset($_SESSION['user']) || !in_array('admin', $_SESSION['user']['roles'])) {
+            header('Location: index.php?page=login');
+            exit;
+        }
 
-    // case 'hewan_qurban_peserta_tambah':
-    //     if (!isset($_SESSION['user']) || !in_array('admin', $_SESSION['user']['roles'])) {
-    //         header('Location: index.php?page=login');
-    //         exit;
-    //     }
-    //     $hewan_id = $_GET['hewan_id'] ?? 0;
-    //     $controller = new HewanQurbanPesertaController();
-    //     $controller->tambahPeserta($hewan_id);
-    //     break;
-
-    // case 'hewan_qurban_peserta_hapus':
-    //     if (!isset($_SESSION['user']) || !in_array('admin', $_SESSION['user']['roles'])) {
-    //         header('Location: index.php?page=login');
-    //         exit;
-    //     }
-    //     $id = $_GET['id'] ?? 0;
-    //     $hewan_id = $_GET['hewan_id'] ?? 0;
-    //     $controller = new HewanQurbanPesertaController();
-    //     $controller->hapusPeserta($id, $hewan_id);
-    //     break;
+        $model = new KelolaUserModel();
+        $data_warga = $model->getAllWargaWithUserStatus();
+        require_once __DIR__ . '/../app/Views/Component/kelola-user.php';
+        break;
 
     default:
         echo "Halaman tidak ditemukan!";

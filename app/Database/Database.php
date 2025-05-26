@@ -2,7 +2,7 @@
 class Database {
     private $host = "localhost";
     private $users = "root";
-    private $password = "sulton2495";
+    private $password = "";
     private $database = "db_qurban";
     public $koneksi;
 

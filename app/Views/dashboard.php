@@ -113,6 +113,13 @@ if (in_array('admin', $roles)) {
       case 'warga':
         include __DIR__ . '/../Views/Component/warga.php';
         break;
+      case 'kelola-user':
+    // Panggil model dan ambil data warga di sini
+        require_once __DIR__ . '/../app/models/Kelola-user.php';
+        $model = new KelolaUserModel();
+        $data_warga = $model->getAllWargaWithUserStatus();
+        include __DIR__ . '/../Views/Component/kelola-user.php';
+        break;
       default:
         echo "<h4>Selamat Datang, " . htmlspecialchars($user['name']) . "</h4>";
         echo "<p>Silakan pilih menu di sebelah kiri.</p>";
