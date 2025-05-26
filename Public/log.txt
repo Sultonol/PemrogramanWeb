@@ -1,0 +1,2 @@
+Update warga_id: 1, role: kurban
+UPDATE: warga_id=1, role=panitia, status=OK

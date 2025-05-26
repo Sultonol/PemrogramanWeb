@@ -1,0 +1,119 @@
+body {
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  background-color: #f7f6f3;
+  color: #2e2e2e;
+  line-height: 1.6;
+  overflow: hidden; /* Hindari scroll body */
+}
+
+header {
+  background-color: #3e3c38;
+  color: #f0ede8;
+  padding: 1rem 1.5rem; /* Lebih ramping */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 30px; /* Lebih elegan */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+header a {
+  color: #f0ede8;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+  font-size: 0.95rem;
+}
+
+header a:hover {
+  background-color: #57544e;
+}
+
+.container {
+  display: flex;
+  height: calc(100vh - 60px); /* Kurangi tinggi header */
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 180px; /* Lebih ramping */
+  background-color: #ece9e2;
+  padding: 1.5rem;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar li + li {
+  margin-top: 0.8rem;
+}
+
+.sidebar a {
+  color: #33322e;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 0.8rem;
+  display: block;
+  border-radius: 6px;
+  transition: background-color 0.25s ease, transform 0.1s ease;
+  font-size: 0.95rem;
+}
+
+.sidebar a:hover {
+  background-color: #dcd8cf;
+  transform: translateX(2px);
+}
+
+.konten {
+  flex: 1;
+  padding: 2rem 2.5rem;
+  background-color: #ffffff;
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.03);
+  overflow-y: auto;
+}
+
+/* Headings */
+.konten h1,
+.konten h2,
+.konten h3 {
+  color: #2e2e2e;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.konten h1 {
+  font-size: 1.8rem;
+  border-bottom: 2px solid #e5e1d8;
+  padding-bottom: 0.4rem;
+}
+
+.konten p {
+  font-size: 1.05rem;
+  color: #444;
+  line-height: 1.6;
+  margin-top: 0.5rem;
+}
+
+/* Utility spacing */
+.mt-2 {
+  margin-top: 2rem;
+}
+.mb-2 {
+  margin-bottom: 2rem;
+}
